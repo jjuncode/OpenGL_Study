@@ -1,6 +1,4 @@
-#include <spdlog/spdlog.h>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include "context.h"
 
 const int WINDOW_WIDTH{ 800 };
 const int WINDOW_HEIGHT{ 800 };
@@ -44,18 +42,31 @@ int main(int argc, const char** argv) {
         glfwTerminate();
         return -1;
     }
+
     auto glVersion = glGetString(GL_VERSION);
     SPDLOG_INFO("OpenGL context version: {}", (const char*)glVersion);
 
+    // context 초기화
+    auto context = Context::Create();
+    if (!context) {
+        SPDLOG_ERROR("failed to create context");
+        glfwTerminate();
+        return -1;
+    }
+
     glfwSetFramebufferSizeCallback(window, OnFramebufferSizeChange);
     glfwSetKeyCallback(window, OnKeyEvent);
-
+    
     // glfw 루프 실행, 윈도우 close 버튼을 누르면 정상 종료
     SPDLOG_INFO("Start main loop");
     while (!glfwWindowShouldClose(window))
     {
         glfwPollEvents();
+
+        context->Render();
+        glfwSwapBuffers(window);
     }
+    context.reset();
 
     glfwTerminate();
     return 0;
