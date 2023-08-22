@@ -9,8 +9,11 @@ std::optional<std::string> LoadTextFile(const std::string& filename) {
         fin.close();
         return {};
     }
+
     std::stringstream text;
     text << fin.rdbuf();
     fin.close();
+    
+    SPDLOG_INFO("{}파일 내용 :\n {}", filename, text.str());
     return text.str();
 }
