@@ -2,19 +2,19 @@
 
 const int WINDOW_WIDTH{ 800 };
 const int WINDOW_HEIGHT{ 800 };
-const char* const WINDOW_NAME{ "Test" };
+const char* const WINDOW_NAME{ "OpenGL Study" };
 
 void OnKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods);
 void OnFramebufferSizeChange(GLFWwindow* window, int width, int height);
 
-int main(int argc, const char** argv) {
+int main() {
     // 시작을 알리는 로그
     SPDLOG_INFO("Start program");
 
     // glfw 라이브러리 초기화, 실패하면 에러 출력후 종료
     SPDLOG_INFO("Initialize glfw");
     if (!glfwInit()) {
-        const char* description = nullptr;
+        const char* description{ nullptr };
         glfwGetError(&description);
         SPDLOG_ERROR("failed to initialize glfw: {}", description);
         return -1;
@@ -26,8 +26,7 @@ int main(int argc, const char** argv) {
 
     // glfw 윈도우 생성, 실패하면 에러 출력후 종료
     SPDLOG_INFO("Create glfw window");
-    auto window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_NAME,
-        nullptr, nullptr);
+    auto window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_NAME, nullptr, nullptr);
     if (!window) {
         SPDLOG_ERROR("failed to create glfw window");
         glfwTerminate();
@@ -43,17 +42,19 @@ int main(int argc, const char** argv) {
         return -1;
     }
 
+    // OpenGL 버전 로그 출력 
     auto glVersion = glGetString(GL_VERSION);
     SPDLOG_INFO("OpenGL context version: {}", (const char*)glVersion);
 
-    // context 초기화
-    auto context = Context::Create();
+    // Context 초기화
+    std::unique_ptr<Context> context = Context::Create();
     if (!context) {
         SPDLOG_ERROR("failed to create context");
         glfwTerminate();
         return -1;
     }
 
+    // Callback Function Setting
     glfwSetFramebufferSizeCallback(window, OnFramebufferSizeChange);
     glfwSetKeyCallback(window, OnKeyEvent);
     
@@ -66,14 +67,16 @@ int main(int argc, const char** argv) {
         context->Render();
         glfwSwapBuffers(window);
     }
+
+    // 정리
     context.reset();
 
     glfwTerminate();
     return 0;
 }
 
-void OnKeyEvent(GLFWwindow* window,
-    int key, int scancode, int action, int mods) {
+void OnKeyEvent(GLFWwindow* window,int key, int scancode, int action, int mods) 
+{
     SPDLOG_INFO("key: {}, scancode: {}, action: {}, mods: {}{}{}",
         key, scancode,
         action == GLFW_PRESS ? "Pressed" :
@@ -87,7 +90,8 @@ void OnKeyEvent(GLFWwindow* window,
     }
 }
 
-void OnFramebufferSizeChange(GLFWwindow* window, int width, int height) {
+void OnFramebufferSizeChange(GLFWwindow* window, int width, int height) 
+{
     SPDLOG_INFO("framebuffer size changed: ({} x {})", width, height);
     glViewport(0, 0, width, height);
 }
