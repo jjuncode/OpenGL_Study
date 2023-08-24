@@ -20,6 +20,8 @@ private:
     VertexLayoutUPtr m_vertexLayout;// VAO_layout
     BufferUPtr m_vertexBuffer;      // VBO
     BufferUPtr m_indexBuffer;       // EBO
+
+    uint32_t m_texture; // texture
 };
 
 #endif // __CONTEXT_H__
