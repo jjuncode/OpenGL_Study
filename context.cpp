@@ -137,7 +137,15 @@ void Context::Render() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     auto projection = glm::perspective(glm::radians(45.0f), (float)640 / (float)480, 0.01f, 20.0f);
-    auto view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f));
+
+    // Ä«¸Þ¶ó
+    extern float x;
+    
+    auto cameraPos = glm::vec3(x, 0.0f, 6.0f);
+    auto cameraTarget = glm::vec3(x, 0.0f, 0.0f);
+    auto cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
+    auto view = glm::lookAt(cameraPos, cameraTarget, cameraUp);
 
     for (size_t i = 0; i < cubePositions.size(); i++) {
         auto& pos = cubePositions[i];

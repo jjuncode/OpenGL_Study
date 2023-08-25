@@ -3,6 +3,8 @@
 void OnKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods);
 void OnFramebufferSizeChange(GLFWwindow* window, int width, int height);
 
+float x{};
+
 int main() {
     // 시작을 알리는 로그
     SPDLOG_INFO("Start program");
@@ -83,6 +85,15 @@ void OnKeyEvent(GLFWwindow* window,int key, int scancode, int action, int mods)
         mods & GLFW_MOD_ALT ? "A" : "-");
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
+    }
+
+    if (key == GLFW_KEY_A) {
+        x -= 0.1f;
+        SPDLOG_INFO("카메라 x위치 : {}", x);
+    }
+    else if (key == GLFW_KEY_D) {
+        x += 0.1f;
+        SPDLOG_INFO("카메라 x위치 : {}", x);
     }
 }
 
