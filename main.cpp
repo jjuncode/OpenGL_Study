@@ -1,9 +1,5 @@
 #include "context.h"
 
-const int WINDOW_WIDTH{ 800 };
-const int WINDOW_HEIGHT{ 800 };
-const char* const WINDOW_NAME{ "OpenGL Study" };
-
 void OnKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods);
 void OnFramebufferSizeChange(GLFWwindow* window, int width, int height);
 
