@@ -124,8 +124,7 @@ void Context::Render() {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    auto projection = glm::perspective(glm::radians(45.0f), (float)640 / (float)480, 0.01f, 20.0f);
-   
+    auto projection = glm::perspective(glm::radians(45.0f), (float)m_width / (float)m_height, 0.01f, 20.0f);
     auto view = glm::lookAt( m_cameraPos, m_cameraPos + m_cameraFront, m_cameraUp);
   
     for (size_t i = 0; i < cubePositions.size(); i++) {
@@ -158,4 +157,11 @@ void Context::ProcessInput(GLFWwindow* window) {
         m_cameraPos += cameraSpeed * cameraUp;
     if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
         m_cameraPos -= cameraSpeed * cameraUp;
+}
+
+void Context::Reshape(int width, int height) 
+{
+    m_width = width;
+    m_height = height;
+    glViewport(0, 0, m_width, m_height);
 }
