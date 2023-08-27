@@ -1,5 +1,6 @@
 #include "context.h"
 #include "image.h"
+#include "imgui/imgui.h"
 
 ContextUPtr Context::Create() {
     auto context = ContextUPtr(new Context());
@@ -105,11 +106,29 @@ bool Context::Init() {
 }
 
 void Context::Render() {
-
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
+	
+    // UI
+    if (ImGui::Begin("UI - Self")) {
+        if(ImGui::ColorEdit4("clear color", glm::value_ptr(m_clearColor))) {
+            glClearColor(m_clearColor.x,m_clearColor.y,m_clearColor.z,m_clearColor.w);
+        }
+        ImGui::Separator();
+        ImGui::DragFloat3("camera pos", glm::value_ptr(m_cameraPos), 0.01f);
+        ImGui::DragFloat("camera yaw", &m_cameraYaw, 0.5f);
+        ImGui::DragFloat("camera pitch", &m_cameraPitch, 0.5f, -89.0f, 89.0f);
+        ImGui::Separator();
+        
+        if (ImGui::Button("reset camera")) {
+            m_cameraYaw = 0.0f;
+            m_cameraPitch = 0.0f;
+            m_cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+        }
+    }
+    ImGui::End();
 
-    std::vector<glm::vec3> cubePositions = {
+	std::vector<glm::vec3> cubePositions = {
       glm::vec3(0.0f, 0.0f, 0.0f),
       glm::vec3(2.0f, 5.0f, -15.0f),
       glm::vec3(-1.5f, -2.2f, -2.5f),
@@ -121,8 +140,6 @@ void Context::Render() {
       glm::vec3(1.5f, 0.2f, -1.5f),
       glm::vec3(-1.3f, 1.0f, -1.5f),
     };
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     m_cameraFront = 
         glm::rotate(glm::mat4(1.0f), glm::radians(m_cameraYaw) , glm::vec3(0.0f, 1.0f, 0.0f))
@@ -145,8 +162,6 @@ void Context::Render() {
 }
 
 void Context::ProcessInput(GLFWwindow* window) {
-    if (!m_cameraControl)
-        return;
 
     const float cameraSpeed = 0.05f;
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
@@ -165,6 +180,9 @@ void Context::ProcessInput(GLFWwindow* window) {
         m_cameraPos += cameraSpeed * cameraUp;
     if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
         m_cameraPos -= cameraSpeed * cameraUp;
+
+    if (glfwGetKey(window, GLFW_KEY_HOME) == GLFW_PRESS)
+        m_cameraPos = glm::vec3(0, 0, 0);
 }
 
 void Context::Reshape(int width, int height) 
