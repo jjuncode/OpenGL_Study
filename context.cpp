@@ -104,10 +104,13 @@ void Context::Render() {
 
 		if (ImGui::CollapsingHeader("light", ImGuiTreeNodeFlags_DefaultOpen)) {
 			ImGui::DragFloat3("l.position", glm::value_ptr(m_light.position), 0.01f);
-            ImGui::DragFloat3("l.distance", &m_light.distance);
+            ImGui::DragFloat("l.distance", &m_light.distance);
 			ImGui::ColorEdit3("l.ambient", glm::value_ptr(m_light.ambient));
 			ImGui::ColorEdit3("l.diffuse", glm::value_ptr(m_light.diffuse));
 			ImGui::ColorEdit3("l.specular", glm::value_ptr(m_light.specular));
+            ImGui::DragFloat3("l.direction", glm::value_ptr(m_light.direction));
+            ImGui::DragFloat2("l.curoff", glm::value_ptr(m_light.cutoff),0.5f,0.f,90.f);
+
 		}
 
 		if (ImGui::CollapsingHeader("material", ImGuiTreeNodeFlags_DefaultOpen)) {
@@ -165,10 +168,16 @@ void Context::Render() {
     m_program->SetUniform("light.ambient", m_light.ambient);
     m_program->SetUniform("light.diffuse", m_light.diffuse);
     m_program->SetUniform("light.specular", m_light.specular);
+    m_program->SetUniform("light.direction", m_light.direction);
+    m_program->SetUniform("light.cutoff", glm::vec2(
+        cosf(glm::radians(m_light.cutoff[0])),
+        cosf(glm::radians(m_light.cutoff[0] + m_light.cutoff[1]))));
+
     m_program->SetUniform("material.diffuse", 0);
     m_program->SetUniform("material.specular", 1);
     m_program->SetUniform("material.shininess", m_material.shininess);
-    
+
+
     for (size_t i = 0; i < cubePositions.size(); i++) {
         auto& pos = cubePositions[i];
         auto model = glm::translate(glm::mat4(1.0f), pos);
